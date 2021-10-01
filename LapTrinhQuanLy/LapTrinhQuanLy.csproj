@@ -128,6 +128,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\PeopleController.cs" />
     <Compile Include="Controllers\PersonnewController.cs" />
@@ -138,8 +139,14 @@
     <Compile Include="Migrations\202109240836365_create_table_person.Designer.cs">
       <DependentUpon>202109240836365_create_table_person.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202110010754290_test.cs" />
+    <Compile Include="Migrations\202110010754290_test.Designer.cs">
+      <DependentUpon>202110010754290_test.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\AccountModel.cs" />
     <Compile Include="Models\AutoKeyboat.cs" />
+    <Compile Include="Models\Encrytion.cs" />
     <Compile Include="Models\LTQLDbContext.cs" />
     <Compile Include="Models\Person.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -537,6 +544,8 @@
     <Content Include="Views\Personnew\Index.cshtml" />
     <Content Include="Views\Personnew\Delete.cshtml" />
     <Content Include="Views\Personnew\Edit.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -557,6 +566,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\202109240836365_create_table_person.resx">
       <DependentUpon>202109240836365_create_table_person.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202110010754290_test.resx">
+      <DependentUpon>202110010754290_test.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
