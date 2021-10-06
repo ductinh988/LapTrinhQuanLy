@@ -10,8 +10,15 @@ namespace LapTrinhQuanLy.Controllers
 {
     public class AccountController : Controller
     {
+        // GET: Account
+
         LTQLDbContext db = new LTQLDbContext();
         Encrytion ecry = new Encrytion();
+        public ActionResult Index()
+        {
+            return View();
+        }
+
         public ActionResult Register()
         {
             return View();
@@ -26,46 +33,123 @@ namespace LapTrinhQuanLy.Controllers
                 acc.Password = ecry.PasswordEncrytion(acc.Password);
                 db.AccountModels.Add(acc);
                 db.SaveChanges();
-                return RedirectToAction("Login", "Account"  );
+                return RedirectToAction("Login", "Account");
             }
             return View(acc);
         }
 
-        public ViewResult Login(string returUrl)
-        {
-            ViewBag.returnUrl = returUrl;
-            return View();       
-        }
-        [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public ActionResult Login(AccountModel acc, string returnUrl )
+
+
+
+
+
+        public ActionResult Login(string returnUrl)
         {
-            if (ModelState.IsValid)
+            if (CheckSession() == 1)
             {
-                if (acc.Username == "admin" && acc.Password == "123123")
+                return RedirectToAction("Index", "HomeAdmin", new { Area = "Admins" });
+            }
+            else if (CheckSession() == 2)
+            {
+                return RedirectToAction("Index", "HomeEmp", new { Area = "Employees" });
+            }
+            ViewBag.ReturnUrl = returnUrl;
+            return View();
+        }
+
+
+        [AllowAnonymous]
+        [HttpPost]
+        public ActionResult Login(AccountModel acc, string returnUrl)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(acc.Username) && !string.IsNullOrEmpty(acc.Password))
                 {
-                    FormsAuthentication.SetAuthCookie(acc.Username, true);
-                    return RedirectToLocal(returnUrl);
+                    using (var db = new LTQLDbContext())
+                    {
+                        var passToMD5 = ecry.PasswordEncrytion(acc.Password);
+                        var account = db.AccountModels.Where(m => m.Username.Equals(acc.Username) && m.Password.Equals(passToMD5)).Count();
+                        if (account == 1)
+                        {
+                            FormsAuthentication.SetAuthCookie(acc.Username, false);
+                            Session["idUser"] = acc.Username;
+                            Session["roleUser"] = acc.RoleID;
+                            return RedirectToLocal(returnUrl);
+                        }
+                        ModelState.AddModelError("", "Thông tin đăng nhập chưa chính xác");
+                    }
                 }
+
+                ModelState.AddModelError("", "Username and password is required.");
+            }
+            catch
+            {
+                ModelState.AddModelError("", "Hệ thống đang được bảo trì, vui lòng liên hệ với quản trị viên");
             }
             return View(acc);
         }
-        public ActionResult Logoff()
-        {
-            FormsAuthentication.SignOut();
-            return RedirectToAction("Index", "Home");
-        }
         private ActionResult RedirectToLocal(string returnUrl)
         {
+
+            if (string.IsNullOrEmpty(returnUrl) || returnUrl == "/")
+            {
+                if (CheckSession() == 1)
+                {
+                    return RedirectToAction("Index", "HomeAdmin", new { Area = "Admins" });
+                }
+                else if (CheckSession() == 2)
+
+                {
+                    return RedirectToAction("Index", "HomeEmp", new { Area = "Employees" });
+                }
+
+            }
             if (Url.IsLocalUrl(returnUrl))
             {
                 return Redirect(returnUrl);
             }
+
             else
             {
                 return RedirectToAction("Index", "Home");
             }
-        }    
+        }
+
+        private int CheckSession()
+        {
+            using (var db = new LTQLDbContext())
+            {
+                var user = HttpContext.Session["idUser"];
+
+                if (user != null)
+                {
+                    var role = db.AccountModels.Find(user.ToString()).RoleID;
+
+                    if (role != null)
+                    {
+                        if (role.ToString() == "Admin")
+
+                        {
+                            return 1;
+                        }
+
+                        else if (role.ToString() == "nv")
+
+                        {
+                            return 2;
+                        }
+                    }
+                }
+            }
+            return 0;
+        }
+
+        public ActionResult Logout()
+        {
+            FormsAuthentication.SignOut();
+            return RedirectToAction("Index", "Home");
+        }
     }
 }

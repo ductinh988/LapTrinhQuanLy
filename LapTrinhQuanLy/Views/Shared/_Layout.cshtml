@@ -20,10 +20,15 @@
             </div>
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                    <li>@Html.ActionLink("About", "About", "Home")</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                    <li>@Html.ActionLink("Đức đẹp trai", "Index", "People")</li>
+                    <li>@Html.ActionLink("Home", "Index", "Home", new { Area = "" }, null)</li>
+                    <li>@Html.ActionLink("About", "About", "Home", new { Area = "" }, null)</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { Area = "" }, null)</li>
+                    <li>@Html.ActionLink("Đức đẹp trai", "Index", "People", new { Area = "" }, null)</li>
+                    <li>@Html.ActionLink("Register", "Register", "Account", new { Area = "" }, null)</li>
+                    <li>@Html.ActionLink("Logout", "Logout", "Account", new { Area = "" }, null)</li>
+                    <li>@Html.ActionLink("Admin", "Index", "HomeAdmin", new { Area = "Admins" }, null)</li>
+
+                    <li>@Html.ActionLink("Employees", "Index", "HomeEmp", new { Area = "Employees" }, null)</li>
                 </ul>
             </div>
         </div>
